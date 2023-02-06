@@ -4,7 +4,7 @@ Python implementation for Difference Reward structure for El Farol Bar Problem
 """
 import math
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import random
 import copy
 
@@ -98,13 +98,14 @@ for i in range(1000):
     
 '''
 # System parameters #
-num_of_nights = 10  # k
-Capacity = 10  # b
+num_of_nights = 7  # k
+Capacity = 12  # b
 total_population = 100  # n
 Epsilon = 0.1
-iterations = 10000
+iterations = 2000
 G_max = 0.0
 best_system_state = []
+G_log = []
 ###################################
 bar = Bar(num_of_nights, Capacity, total_population, Epsilon, iterations)
 
@@ -117,7 +118,7 @@ system_state = copy.copy(bar.system_state)
 print("\n----------------------------------------------")
 print("Start System reward: ", G)
 print("Start System state: ", system_state)
-for i in range(1000):
+for i in range(bar.iterations):
     bar.make_choices()
     bar.update_system_state()
     bar.update_global_reward()
@@ -127,6 +128,7 @@ for i in range(1000):
         best_system_state = copy.copy(bar.system_state)
 
     G = copy.copy(bar.G)
+    G_log.append(G)
     system_state = copy.copy(bar.system_state)
 
 # print("\n----------------------------------------------")
@@ -135,3 +137,13 @@ print("Best System state: ", best_system_state)
 print("\nEnd System reward: ", G)
 print("End System state: ", system_state)
 print("----------------------------------------------")
+
+# Plotting for Visualization
+plt.plot(range(iterations), G_log)
+plt.plot([0, iterations], [sum(G_log) / iterations, sum(G_log) / iterations], linestyle="--")
+plt.xlabel("epochs")
+plt.ylabel("G")
+title = "Global Reward \n" + " G_max = " + str(round(G_max, 2)) + " ; G_avg = " + str(round(sum(G_log) / iterations, 2))
+plt.title(title)
+plt.show()
+plt.pause(0)
